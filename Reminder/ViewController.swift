@@ -1,0 +1,19 @@
+//
+//  ViewController.swift
+//  Reminder
+//
+//  Created by João Gabriel Ramos on 05/05/26.
+//
+
+import UIKit
+
+class ViewController: UIViewController {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view.
+    }
+
+
+}
+
