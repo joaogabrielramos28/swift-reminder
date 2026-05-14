@@ -10,11 +10,32 @@ import UIKit
 
 
 class SplashViewController:UIViewController {
-    let contentView  = SplashView()
+    let contentView:SplashView
+    public weak var flowDelegate:SplashFlowDelegate?
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        startBreathingAnimation()
         setup()
+    }
+    
+    private func decideNavigationFlow(){
+        if let user = UserDefaultsManager.loadUser(), user.isUserSaved {
+            flowDelegate?.navigateToHome()
+        }else{
+            showLoginBottomSheet()
+        }
+    }
+    
+    
+    
+    init(contentView: SplashView, flowDelegate: SplashFlowDelegate) {
+        self.flowDelegate = flowDelegate
+        self.contentView = contentView
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     
@@ -47,13 +68,25 @@ class SplashViewController:UIViewController {
     
     @objc
     private func showLoginBottomSheet(){
-        let loginBottomSheet = LoginBottomSheetViewController()
-        loginBottomSheet.modalPresentationStyle = .overCurrentContext
-        loginBottomSheet.modalTransitionStyle = .crossDissolve
-        self.present(loginBottomSheet, animated: false){
-            loginBottomSheet.animateShow()
-        }
-        
+        animationLogoUp()
+        self.flowDelegate?.openLoginBottomSheet()
     }
     
+}
+
+//MARK: - Animations
+extension SplashViewController {
+    private func startBreathingAnimation(){
+        UIView.animate(withDuration: 0.8,delay: 0, animations: {
+            self.contentView.logoImageView.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+        },completion: { _ in
+            self.decideNavigationFlow()
+        })
+    }
+    
+    private func animationLogoUp(){
+        UIView.animate(withDuration: 0.5, delay:0.0,options:[.curveEaseOut],animations:{
+            self.contentView.logoImageView.transform = self.contentView.logoImageView.transform.translatedBy(x: 0, y: -150)
+        } )
+    }
 }
